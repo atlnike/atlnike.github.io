@@ -108,6 +108,81 @@
   opacity: 0.8;
 }
 
+/* Inspect the Code Showroom */
+
+.code-showroom {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 1000px;
+  height: 500px;
+  background: #111;
+  border: 2px solid var(--yellow);
+  border-radius: 10px;
+  box-shadow: 0 0 20px var(--yellow);
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem 2rem 2rem 2rem;
+  z-index: 10000;
+  color: var(--white);
+  font-family: 'Space Grotesk', monospace;
+  overflow: hidden;
+  user-select: text;
+}
+
+.code-showroom.hidden {
+  display: none;
+}
+
+.code-pane {
+  flex: 1;
+  background: #222;
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-y: auto;
+  box-shadow: inset 0 0 10px #000;
+  outline: none;
+  border: 1px solid #444;
+}
+
+.code-pane h3 {
+  color: var(--yellow);
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+pre {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: var(--yellow);
+  cursor: pointer;
+  font-weight: 900;
+  line-height: 1;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.close-btn:hover {
+  color: #fff;
+}
+
+
   </style>
 </head>
 <body>
@@ -124,7 +199,70 @@
         <a href="#testdrive">Test Drive</a>
         <a href="#devmode">Unlock Developer Mode</a>
       </div>  
+      <section id="inspect" class="code-showroom hidden">
+        <div class="code-pane" id="java-pane" tabindex="0">
+          <h3>Java</h3>
+          <pre><code lang="java">
+      // Java: Multi-threaded task manager
+      public class TaskEngine {
+          public static void main(String[] args) {
+              Runnable task = () -> System.out.println("Task running...");
+              new Thread(task).start();
+          }
+      }
+          </code></pre>
+        </div>
+      
+        <div class="code-pane" id="mips-pane" tabindex="0">
+          <h3>MIPS</h3>
+          <pre><code lang="mips">
+      # MIPS: Load and store
+      .data
+      val: .word 10
+      
+      .text
+      main:
+          lw $t0, val
+          addi $t0, $t0, 1
+          sw $t0, val
+          </code></pre>
+        </div>
+      
+        <button id="closeInspect" class="close-btn" aria-label="Close Inspect the Code">&times;</button>
+      </section>      
+      
     <div class="footer">© 2025 Yukora LLC</div>
   </div>
+ 
+<script>
+
+const inspectSection = document.getElementById('inspect');
+const javaPane = document.getElementById('java-pane');
+const mipsPane = document.getElementById('mips-pane');
+const closeBtn = document.getElementById('closeInspect');
+
+// Open inspect on clicking the utility link (make sure utility link href="#inspect")
+document.querySelector('a[href="#inspect"]').addEventListener('click', e => {
+  e.preventDefault();
+  inspectSection.classList.remove('hidden');
+  document.body.style.overflow = 'hidden'; // disable background scroll
+  javaPane.focus();
+});
+
+// Close button hides the showroom
+closeBtn.addEventListener('click', () => {
+  inspectSection.classList.add('hidden');
+  document.body.style.overflow = ''; // restore scroll
+});
+
+// Sync scroll positions
+javaPane.addEventListener('scroll', () => {
+  mipsPane.scrollTop = javaPane.scrollTop;
+});
+mipsPane.addEventListener('scroll', () => {
+  javaPane.scrollTop = mipsPane.scrollTop;
+});
+</script>
+
 </body>
 </html>
