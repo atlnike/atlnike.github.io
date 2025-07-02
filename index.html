@@ -1,219 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MIPS Pong Simulator</title>
-<style>
-  body {
-    background: #121212;
-    color: #e0e0e0;
-    font-family: 'Consolas', monospace, monospace;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem;
-    height: 100vh;
-    margin: 0;
-    user-select: none;
-  }
-  h1 {
-    margin-bottom: 0.5rem;
-  }
-  #gameCanvas {
-    background: #222;
-    border: 2px solid #444;
-    image-rendering: pixelated;
-    margin-bottom: 1rem;
-  }
-  #registers {
-    display: grid;
-    grid-template-columns: repeat(3, 120px);
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-  .reg {
-    background: #1e1e1e;
-    padding: 0.5rem;
-    border-radius: 6px;
-    text-align: center;
-  }
-  .reg strong {
-    display: block;
-    margin-bottom: 0.3rem;
-    color: #90caf9;
-  }
-  #instructions {
-    font-size: 0.9rem;
-    color: #999;
-    max-width: 600px;
-    text-align: center;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ferrari</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-<h1>MIPS Pong Simulator</h1>
-<canvas id="gameCanvas" width="160" height="100"></canvas>
-<div id="registers">
-  <div class="reg"><strong>$t0 (ballX)</strong><span id="reg_t0">0</span></div>
-  <div class="reg"><strong>$t1 (ballY)</strong><span id="reg_t1">0</span></div>
-  <div class="reg"><strong>$t2 (ballDirX)</strong><span id="reg_t2">0</span></div>
-  <div class="reg"><strong>$t3 (ballDirY)</strong><span id="reg_t3">0</span></div>
-  <div class="reg"><strong>$t4 (paddle1Y)</strong><span id="reg_t4">0</span></div>
-  <div class="reg"><strong>$t5 (paddle2Y)</strong><span id="reg_t5">0</span></div>
-</div>
-<div id="instructions">
-  Use <strong>W/S</strong> for Left Paddle and <strong>I/K</strong> for Right Paddle.<br>
-  Press <strong>Space</strong> to start/pause the game.
-</div>
+    <div class="container">
+        <div class="title">4.0 GPA</div>
+        <div class="tagline">Based in Washington, D.C. Searching for Relocation.
+        <br>Worked with the Department of the Treasury</div>
+        <div class="price">$80,000 - $100,000 a year</div>
+    <a href="mailto:Torresc6@vcu.edu?subject=Follow-up%20on%20Your%20Application&body=Hello%2C%0D%0AI%20would%20like%20to%20schedule%20a%20time%20to%20speak%20further%20about%20your%20experience%20and%20potential%20fit%20for%20our%20team.%20Please%20share%20your%20availability%20for%20a%20brief%20conversation.%0D%0ABest%20regards." class="button">Buy Now</a> 
+    <div class="utility-links">
+      <a href="#inspect">Inspect the Code</a>
+      <a href="#diagnostics">Run Diagnostics</a>
+      <a href="#download">Download Specs</a>
+      <a href="#testdrive">Test Drive</a>
+      <a href="#devmode">Unlock Developer Mode</a>
+    </div>  
 
-<script>
-(() => {
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
-  const width = canvas.width;
-  const height = canvas.height;
-
-  // Registers (simulate MIPS registers)
-  let registers = {
-    t0: 10, // ballX
-    t1: 50, // ballY
-    t2: 1,  // ballDirX (+1 right, -1 left)
-    t3: 1,  // ballDirY (+1 down, -1 up)
-    t4: 40, // paddle1Y
-    t5: 40  // paddle2Y
-  };
-
-  // Register display elements
-  const regElements = {
-    t0: document.getElementById('reg_t0'),
-    t1: document.getElementById('reg_t1'),
-    t2: document.getElementById('reg_t2'),
-    t3: document.getElementById('reg_t3'),
-    t4: document.getElementById('reg_t4'),
-    t5: document.getElementById('reg_t5')
-  };
-
-  // Game state
-  let running = false;
-  const paddleHeight = 20;
-  const paddleWidth = 5;
-  const ballSize = 5;
-  const paddleSpeed = 2;
-  const ballSpeed = 1; // slower ball speed
-
-  // Key state
-  const keys = {};
-
-  window.addEventListener('keydown', e => {
-    keys[e.key.toLowerCase()] = true;
-
-    if (e.key === ' ') {
-      running = !running;
-      if (running) {
-        loop();
+    <section id="inspect" class="code-showroom hidden">
+        <div class="code-pane" id="java-pane" tabindex="0">
+          <h3>Java</h3>
+          <pre><code lang="java">
+      // Java: Multi-threaded task manager
+      public class TaskEngine {
+          public static void main(String[] args) {
+              Runnable task = () -> System.out.println("Task running...");
+              new Thread(task).start();
+          }
       }
-      e.preventDefault();
-    }
-  });
-  window.addEventListener('keyup', e => {
-    keys[e.key.toLowerCase()] = false;
-  });
+          </code></pre>
+      
+          <!-- JS Game Canvas (JavaScript Demo) -->
+          <canvas id="jsGameCanvas" width="300" height="150"></canvas>
+        </div>
+      
+        <div class="code-pane" id="mips-pane" tabindex="0">
+          <h3>MIPS</h3>
+          <pre><code lang="mips">
+      # MIPS: Load and store
+      .data
+      val: .word 10
+      
+      .text
+      main:
+          lw $t0, val
+          addi $t0, $t0, 1
+          sw $t0, val
+          </code></pre>
+      
+          <!-- Simulated MIPS HUD -->
+          <pre id="mipsGameOutput">Loading MIPS registers...</pre>
+        </div>
+      
+        <button id="closeInspect" class="close-btn" aria-label="Close Inspect the Code">&times;</button>
+      </section>
+          
+    
+    <div class="footer">© 2025 LLC</div>
+  </div>
 
-  function update() {
-    if (!running) return;
-
-    // Move paddles
-    if (keys['w'] && registers.t4 > 0) {
-      registers.t4 -= paddleSpeed;
-    }
-    if (keys['s'] && registers.t4 < height - paddleHeight) {
-      registers.t4 += paddleSpeed;
-    }
-    if (keys['i'] && registers.t5 > 0) {
-      registers.t5 -= paddleSpeed;
-    }
-    if (keys['k'] && registers.t5 < height - paddleHeight) {
-      registers.t5 += paddleSpeed;
-    }
-
-
-    // Move ball
-    registers.t0 += registers.t2 * ballSpeed;
-    registers.t1 += registers.t3 * ballSpeed;
-
-    // Ball collision top/bottom
-    if (registers.t1 <= 0) {
-      registers.t1 = 0;
-      registers.t3 = 1; // invert vertical direction
-    }
-    if (registers.t1 >= height - ballSize) {
-      registers.t1 = height - ballSize;
-      registers.t3 = -1;
-    }
-
-    // Ball collision left paddle
-    if (
-      registers.t0 <= paddleWidth &&
-      registers.t1 + ballSize >= registers.t4 &&
-      registers.t1 <= registers.t4 + paddleHeight
-    ) {
-      registers.t0 = paddleWidth;
-      registers.t2 = 1; // bounce right
-    }
-    // Ball collision right paddle
-    if (
-      registers.t0 >= width - paddleWidth - ballSize &&
-      registers.t1 + ballSize >= registers.t5 &&
-      registers.t1 <= registers.t5 + paddleHeight
-    ) {
-      registers.t0 = width - paddleWidth - ballSize;
-      registers.t2 = -1; // bounce left
-    }
-
-    // Ball out of bounds reset
-    if (registers.t0 < 0 || registers.t0 > width) {
-      // Reset ball position & direction
-      registers.t0 = width / 2;
-      registers.t1 = height / 2;
-      // Random initial direction
-      registers.t2 = Math.random() > 0.5 ? 1 : -1;
-      registers.t3 = Math.random() > 0.5 ? 1 : -1;
-    }
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, width, height);
-
-    // Draw paddles
-    ctx.fillStyle = '#44aaff';
-    ctx.fillRect(0, registers.t4, paddleWidth, paddleHeight);
-    ctx.fillRect(width - paddleWidth, registers.t5, paddleWidth, paddleHeight);
-
-    // Draw ball
-    ctx.fillStyle = '#ffaa44';
-    ctx.fillRect(registers.t0, registers.t1, ballSize, ballSize);
-  }
-
-  function updateRegisterDisplay() {
-    for (const reg in registers) {
-      regElements[reg].textContent = registers[reg].toFixed(1);
-    }
-  }
-
-  function loop() {
-    if (!running) return;
-    update();
-    draw();
-    updateRegisterDisplay();
-    requestAnimationFrame(loop);
-  }
-
-  // Initial draw & register display
-  draw();
-  updateRegisterDisplay();
-})();
-</script>
+  <script src="js/inspect.js"></script>
+  <script src="game-js.js"></script>
+  <script src="game-mips.js"></script>
 
 </body>
 </html>
