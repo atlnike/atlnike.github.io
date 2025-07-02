@@ -1,27 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const inspectLink = document.querySelector('a[href="#inspect"]');
-    const inspectSection = document.getElementById('inspect');
-    const closeBtn = document.getElementById('closeInspect');
+    const link = document.querySelector('a[href="#inspect"]');
+    const panel = document.getElementById('inspect');
+    const close = document.getElementById('closeInspect');
   
-    inspectLink.addEventListener('click', e => {
+    link.addEventListener('click', e => {
       e.preventDefault();
-      inspectSection.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-  
-      // INIT JavaScript game here (optional: restart if re-opened)
-      if (typeof initJsGame === 'function') {
-        initJsGame();
-      }
-  
-      // INIT MIPS game here
-      if (typeof initMipsGame === 'function') {
-        initMipsGame();
-      }
+      panel.classList.remove('hidden');
+      if (typeof initJsGame === 'function') initJsGame();
+      if (typeof initMipsGame === 'function') initMipsGame();
     });
   
-    closeBtn.addEventListener('click', () => {
-      inspectSection.classList.add('hidden');
-      document.body.style.overflow = '';
+    close.addEventListener('click', () => {
+      panel.classList.add('hidden');
     });
   });
   

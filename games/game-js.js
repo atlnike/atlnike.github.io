@@ -2,78 +2,46 @@ function initJsGame() {
   const canvas = document.getElementById('jsGameCanvas');
   const ctx = canvas.getContext('2d');
 
-  canvas.width = 300;
-  canvas.height = 150;
-
-  let ball = {
-    x: 150,
-    y: 75,
-    radius: 5,
-    dx: 2, // Adjust ball speed here
-    dy: 2
-  };
-
-  let paddle = {
-    width: 8,
-    height: 40,
-    x: 10,
-    y: 55,
-    speed: 4,
-    dy: 0
-  };
-
-  function drawBall() {
+  let ball = { x:150, y:75, r:6, dx:2, dy:2 };
+  let paddle = { x:10, y:55, w:8, h:36, dy:0, speed:4 };
+  const animate = () => {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#a0aec0";
     ctx.beginPath();
-    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-    ctx.fillStyle = '#ffffff';
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
     ctx.fill();
-    ctx.closePath();
-  }
 
-  function drawPaddle() {
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
-  }
+    ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
 
-  function update() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBall();
-    drawPaddle();
+    paddle.y = Math.max(0, Math.min(canvas.height - paddle.h, paddle.y + paddle.dy));
+    ball.x += ball.dx; ball.y += ball.dy;
 
-    paddle.y += paddle.dy;
-    if (paddle.y < 0) paddle.y = 0;
-    if (paddle.y + paddle.height > canvas.height) paddle.y = canvas.height - paddle.height;
+    if (ball.y < ball.r || ball.y > canvas.height - ball.r) ball.dy *= -1;
 
-    ball.x += ball.dx;
-    ball.y += ball.dy;
-
-    if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) ball.dy *= -1;
-
-    if (ball.x - ball.radius < paddle.x + paddle.width &&
+    if (ball.x - ball.r < paddle.x + paddle.w &&
         ball.y > paddle.y &&
-        ball.y < paddle.y + paddle.height) {
+        ball.y < paddle.y + paddle.h) {
       ball.dx *= -1;
-      ball.x = paddle.x + paddle.width + ball.radius;
+      ball.x = paddle.x + paddle.w + ball.r;
     }
 
-    if (ball.x - ball.radius < 0) {
+    if (ball.x < 0) {
       ball.x = 150;
       ball.y = 75;
       ball.dx = 2;
       ball.dy = 2;
     }
 
-    requestAnimationFrame(update);
-  }
+    requestAnimationFrame(animate);
+  };
 
   document.addEventListener('keydown', e => {
     if (e.key === 'w') paddle.dy = -paddle.speed;
     if (e.key === 's') paddle.dy = paddle.speed;
   });
-
   document.addEventListener('keyup', e => {
-    if (e.key === 'w' || e.key === 's') paddle.dy = 0;
+    if (['w','s'].includes(e.key)) paddle.dy = 0;
   });
 
-  update(); // Only starts when initJsGame() is called
+  animate();
 }

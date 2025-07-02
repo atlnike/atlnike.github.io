@@ -1,30 +1,18 @@
 function initMipsGame() {
-    const mipsHud = document.getElementById('mipsGameOutput');
-    let mipsScore = 0;
-  
-    function simulateMipsLogic() {
-      mipsScore += 1;
-  
-      mipsHud.innerText = `
-  MIPS REGISTER STATUS:
-  -----------------------
-  $t0: ${10 + mipsScore}
-  $t1: ${5 * mipsScore}
-  $t2: ${mipsScore * mipsScore}
-  
-  INSTRUCTION TRACE:
-  lw $t0, val
-  addi $t0, $t0, ${mipsScore}
-  sw $t0, val
-  
-  Cycles Elapsed: ${100 + mipsScore}
+    const out = document.getElementById('mipsGameOutput');
+    let score = 0;
+    const step = () => {
+      score++;
+      out.textContent = `
+  $t0: ${10+score}
+  $t1: ${(5*score).toFixed(1)}
+  $t2: ${(score*score)}
+  [ lw $t0, val | addi $t0, $t0, ${score} | sw $t0, val ]
+  Cycles: ${100 + score}
   `;
-  
-      if (mipsScore < 20) {
-        setTimeout(simulateMipsLogic, 1000);
-      }
-    }
-  
-    simulateMipsLogic(); // Only starts when initMipsGame() is called
+      if (score < 20) setTimeout(step, 1000);
+    };
+    out.textContent = 'Initializing...';
+    setTimeout(step, 500);
   }
   
