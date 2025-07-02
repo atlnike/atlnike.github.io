@@ -63,7 +63,7 @@
   <div class="reg"><strong>$t5 (paddle2Y)</strong><span id="reg_t5">0</span></div>
 </div>
 <div id="instructions">
-  Use <strong>W/S</strong> for Left Paddle and <strong>Arrow Up/Down</strong> for Right Paddle.<br>
+  Use <strong>W/S</strong> for Left Paddle and <strong>I/K</strong> for Right Paddle.<br>
   Press <strong>Space</strong> to start/pause the game.
 </div>
 
@@ -130,12 +130,13 @@
     if (keys['s'] && registers.t4 < height - paddleHeight) {
       registers.t4 += paddleSpeed;
     }
-    if (keys['arrowup'] && registers.t5 > 0) {
+    if (keys['i'] && registers.t5 > 0) {
       registers.t5 -= paddleSpeed;
     }
-    if (keys['arrowdown'] && registers.t5 < height - paddleHeight) {
+    if (keys['k'] && registers.t5 < height - paddleHeight) {
       registers.t5 += paddleSpeed;
     }
+
 
     // Move ball
     registers.t0 += registers.t2 * ballSpeed;
