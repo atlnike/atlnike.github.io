@@ -2,61 +2,335 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ferrari</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JS Breakout MiniGame Demo</title>
+  <style>
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      height: 100vh;
+      margin: 0;
+    }
+    #gameContainer {
+      background: #222;
+      border: 2px solid #FFF200;
+      border-radius: 8px;
+      padding: 1rem;
+      width: 320px;
+      user-select: none;
+      position: relative;
+    }
+    canvas {
+      background: black;
+      display: block;
+      margin: 0 auto;
+      border-radius: 4px;
+    }
+    button {
+      background: #FFF200;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin: 1rem 0 0.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: #111;
+      border-radius: 3px;
+      transition: background 0.2s ease;
+    }
+    button:hover {
+      background: #e6db00;
+    }
+    #sourceCode {
+      background: #222;
+      border: 1px solid #555;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-family: monospace;
+      white-space: pre-wrap;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      border-radius: 6px;
+      user-select: text;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="title">4.0 GPA</div>
-        <div class="tagline">Based in Washington, D.C. Searching for Relocation.
-        <br>Worked with the Department of the Treasury</div>
-        <div class="price">$80,000 - $100,000 a year</div>
-    <a href="mailto:Torresc6@vcu.edu?subject=Follow-up%20on%20Your%20Application&body=Hello%2C%0D%0AI%20would%20like%20to%20schedule%20a%20time%20to%20speak%20further%20about%20your%20experience%20and%20potential%20fit%20for%20our%20team.%20Please%20share%20your%20availability%20for%20a%20brief%20conversation.%0D%0ABest%20regards." class="button">Buy Now</a> 
-    <div class="utility-links">
-      <a href="#inspect">Inspect the Code</a>
-      <a href="#diagnostics">Run Diagnostics</a>
-      <a href="#download">Download Specs</a>
-      <a href="#testdrive">Test Drive</a>
-      <a href="#devmode">Unlock Developer Mode</a>
-    </div>  
 
-    <section id="inspect" class="code-showroom hidden">
-      <div class="code-pane" id="java-pane" tabindex="0">
-        <h3>Java</h3>
-        <pre><code lang="java">
-  // Java: Multi-threaded task manager
-  public class TaskEngine {
-      public static void main(String[] args) {
-          Runnable task = () -> System.out.println("Task running...");
-          new Thread(task).start();
-      }
-  }
-        </code></pre>
-      </div>
-    
-      <div class="code-pane" id="mips-pane" tabindex="0">
-        <h3>MIPS</h3>
-        <pre><code lang="mips">
-  # MIPS: Load and store
-  .data
-  val: .word 10
-  
-  .text
-  main:
-      lw $t0, val
-      addi $t0, $t0, 1
-      sw $t0, val
-        </code></pre>
-      </div>
-    
-      <button id="closeInspect" class="close-btn" aria-label="Close Inspect the Code">&times;</button>
-    </section>      
-    
-    <div class="footer">© 2025 LLC</div>
+  <h1>JavaScript Breakout</h1>
+  <div id="gameContainer">
+    <canvas id="gameCanvas" width="300" height="200"></canvas>
+    <button id="startPauseBtn">Start</button>
+    <button id="toggleSourceBtn">View Source</button>
+    <pre id="sourceCode"></pre>
   </div>
 
-  <script src="js/inspect.js"></script>
+<script>
+  // Game variables
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const paddleHeight = 10;
+  const paddleWidth = 70;
+  let paddleX = (canvas.width - paddleWidth) / 2;
+
+  const ballRadius = 8;
+  let x = canvas.width / 2;
+  let y = canvas.height - 30;
+  let dx = 3;
+  let dy = -3;
+
+  const brickRowCount = 3;
+  const brickColumnCount = 5;
+  const brickWidth = 50;
+  const brickHeight = 15;
+  const brickPadding = 10;
+  const brickOffsetTop = 30;
+  const brickOffsetLeft = 25;
+
+  let bricks = [];
+  for(let c=0; c<brickColumnCount; c++) {
+    bricks[c] = [];
+    for(let r=0; r<brickRowCount; r++) {
+      bricks[c][r] = { x: 0, y: 0, status: 1 };
+    }
+  }
+
+  let rightPressed = false;
+  let leftPressed = false;
+
+  let score = 0;
+  let lives = 3;
+
+  let isRunning = false;
+  let animationId;
+
+  // Draw functions
+  function drawBall() {
+    ctx.beginPath();
+    ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+    ctx.fillStyle = '#FFF200';
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function drawPaddle() {
+    ctx.beginPath();
+    ctx.rect(paddleX, canvas.height - paddleHeight - 5, paddleWidth, paddleHeight);
+    ctx.fillStyle = '#FFF200';
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function drawBricks() {
+    for(let c=0; c<brickColumnCount; c++) {
+      for(let r=0; r<brickRowCount; r++) {
+        if(bricks[c][r].status === 1) {
+          let brickX = c*(brickWidth + brickPadding) + brickOffsetLeft;
+          let brickY = r*(brickHeight + brickPadding) + brickOffsetTop;
+          bricks[c][r].x = brickX;
+          bricks[c][r].y = brickY;
+          ctx.beginPath();
+          ctx.rect(brickX, brickY, brickWidth, brickHeight);
+          ctx.fillStyle = '#FFF200';
+          ctx.fill();
+          ctx.closePath();
+        }
+      }
+    }
+  }
+
+  function drawScore() {
+    ctx.font = '16px monospace';
+    ctx.fillStyle = '#FFF200';
+    ctx.fillText('Score: '+score, 8, 20);
+  }
+
+  function drawLives() {
+    ctx.font = '16px monospace';
+    ctx.fillStyle = '#FFF200';
+    ctx.fillText('Lives: '+lives, canvas.width - 70, 20);
+  }
+
+  // Collision detection
+  function collisionDetection() {
+    for(let c=0; c<brickColumnCount; c++) {
+      for(let r=0; r<brickRowCount; r++) {
+        let b = bricks[c][r];
+        if(b.status === 1) {
+          if(x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+            dy = -dy;
+            b.status = 0;
+            score++;
+            if(score === brickRowCount * brickColumnCount) {
+              alert('YOU WIN, CONGRATS!');
+              document.location.reload();
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Draw all
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawBricks();
+    drawBall();
+    drawPaddle();
+    drawScore();
+    drawLives();
+    collisionDetection();
+
+    if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+      dx = -dx;
+    }
+    if(y + dy < ballRadius) {
+      dy = -dy;
+    } else if(y + dy > canvas.height - ballRadius - paddleHeight - 5) {
+      if(x > paddleX && x < paddleX + paddleWidth) {
+        dy = -dy;
+      } else {
+        lives--;
+        if(!lives) {
+          alert('GAME OVER');
+          document.location.reload();
+        } else {
+          x = canvas.width/2;
+          y = canvas.height-30;
+          dx = 3;
+          dy = -3;
+          paddleX = (canvas.width - paddleWidth)/2;
+        }
+      }
+    }
+
+    if(rightPressed && paddleX < canvas.width - paddleWidth) {
+      paddleX += 7;
+    } else if(leftPressed && paddleX > 0) {
+      paddleX -= 7;
+    }
+  }
+
+  // Game loop
+  function gameLoop() {
+    if (!isRunning) return;
+    draw();
+    x += dx;
+    y += dy;
+    animationId = requestAnimationFrame(gameLoop);
+  }
+
+  // Controls
+  document.addEventListener("keydown", e => {
+    if(e.key === "Right" || e.key === "ArrowRight") {
+      rightPressed = true;
+    } else if(e.key === "Left" || e.key === "ArrowLeft") {
+      leftPressed = true;
+    }
+  });
+
+  document.addEventListener("keyup", e => {
+    if(e.key === "Right" || e.key === "ArrowRight") {
+      rightPressed = false;
+    } else if(e.key === "Left" || e.key === "ArrowLeft") {
+      leftPressed = false;
+    }
+  });
+
+  // Start/Pause button
+  const startPauseBtn = document.getElementById('startPauseBtn');
+  startPauseBtn.addEventListener('click', () => {
+    if(isRunning) {
+      isRunning = false;
+      startPauseBtn.textContent = 'Start';
+      cancelAnimationFrame(animationId);
+    } else {
+      if(!animationId) {
+        // If game never started, reset variables
+        resetGame();
+      }
+      isRunning = true;
+      startPauseBtn.textContent = 'Pause';
+      gameLoop();
+    }
+  });
+
+  // Reset game state (to start fresh on first start or after reload)
+  function resetGame() {
+    score = 0;
+    lives = 3;
+    x = canvas.width / 2;
+    y = canvas.height - 30;
+    dx = 3;
+    dy = -3;
+    paddleX = (canvas.width - paddleWidth) / 2;
+    for(let c=0; c<brickColumnCount; c++) {
+      for(let r=0; r<brickRowCount; r++) {
+        bricks[c][r].status = 1;
+      }
+    }
+    animationId = null;
+  }
+
+  // View source toggle
+  const toggleSourceBtn = document.getElementById('toggleSourceBtn');
+  const sourceCodePre = document.getElementById('sourceCode');
+  const sourceCode = `// JavaScript Breakout Game (simplified)
+// See full source at https://gist.github.com/example
+
+// Variables and canvas setup
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const paddleHeight = 10;
+const paddleWidth = 70;
+let paddleX = (canvas.width - paddleWidth) / 2;
+const ballRadius = 8;
+let x = canvas.width / 2;
+let y = canvas.height - 30;
+let dx = 3;
+let dy = -3;
+const brickRowCount = 3;
+const brickColumnCount = 5;
+const brickWidth = 50;
+const brickHeight = 15;
+const brickPadding = 10;
+const brickOffsetTop = 30;
+const brickOffsetLeft = 25;
+let bricks = [];
+for(let c=0; c<brickColumnCount; c++) {
+  bricks[c] = [];
+  for(let r=0; r<brickRowCount; r++) {
+    bricks[c][r] = { x: 0, y: 0, status: 1 };
+  }
+}
+let rightPressed = false;
+let leftPressed = false;
+let score = 0;
+let lives = 3;
+let isRunning = false;
+let animationId;
+// Draw functions and game loop omitted for brevity
+// Collision detection, controls, and button handlers as above`;
+
+
+  toggleSourceBtn.addEventListener('click', () => {
+    if(sourceCodePre.style.display === 'block') {
+      sourceCodePre.style.display = 'none';
+      toggleSourceBtn.textContent = 'View Source';
+    } else {
+      sourceCodePre.textContent = sourceCode;
+      sourceCodePre.style.display = 'block';
+      toggleSourceBtn.textContent = 'Hide Source';
+    }
+  });
+</script>
+
 </body>
 </html>
