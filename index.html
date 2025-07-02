@@ -5,264 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ferrari</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --yellow: #FFF200;
-      --black: #111111;
-      --white: #f8f8f8;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background-color: var(--white);
-      color: var(--black);
-      font-family: 'Space Grotesk', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-
-    .container {
-      max-width: 600px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .title {
-      font-size: 3rem;
-      font-weight: 700;
-      letter-spacing: -1px;
-    }
-
-    .tagline {
-      font-size: 1rem;
-      color: #555;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .price {
-      font-size: 1.25rem;
-      font-weight: 500;
-      margin-top: -1rem;
-    }
-
-    .button {
-      background-color: var(--yellow);
-      border: none;
-      padding: 1rem 2rem;
-      font-size: 1rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      cursor: pointer;
-      color: var(--black);
-      transition: background-color 0.2s ease;
-      text-decoration: none;
-      display: inline-block;
-      border-radius: 2px;
-    }
-
-    .button:hover {
-      background-color: #e6db00;
-    }
-
-    .footer {
-      font-size: 0.8rem;
-      color: #aaa;
-      margin-top: 2rem;
-    }
-
-    @media (max-width: 600px) {
-      .title {
-        font-size: 2.2rem;
-      }
-    }
-    .utility-links {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  font-size: 0.85rem;
-  margin-top: 1.5rem;
-  color: #333;
-}
-
-.utility-links a {
-  text-decoration: none;
-  color: var(--black);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease, opacity 0.2s ease;
-}
-
-.utility-links a:hover {
-  border-color: var(--black);
-  opacity: 0.8;
-}
-
-/* Inspect the Code Showroom */
-
-.code-showroom {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90vw;
-  max-width: 1000px;
-  height: 500px;
-  background: #111;
-  border: 2px solid var(--yellow);
-  border-radius: 10px;
-  box-shadow: 0 0 20px var(--yellow);
-  display: flex;
-  gap: 1.5rem;
-  padding: 1rem 2rem 2rem 2rem;
-  z-index: 10000;
-  color: var(--white);
-  font-family: 'Space Grotesk', monospace;
-  overflow: hidden;
-  user-select: text;
-}
-
-.code-showroom.hidden {
-  display: none;
-}
-
-.code-pane {
-  flex: 1;
-  background: #222;
-  border-radius: 6px;
-  padding: 1rem;
-  overflow-y: auto;
-  box-shadow: inset 0 0 10px #000;
-  outline: none;
-  border: 1px solid #444;
-}
-
-.code-pane h3 {
-  color: var(--yellow);
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-weight: 700;
-  font-size: 1.2rem;
-}
-
-pre {
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.close-btn {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: 2rem;
-  background: none;
-  border: none;
-  color: var(--yellow);
-  cursor: pointer;
-  font-weight: 900;
-  line-height: 1;
-  transition: color 0.2s ease;
-  user-select: none;
-}
-
-.close-btn:hover {
-  color: #fff;
-}
-
-
-  </style>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div class="container">
-    <div class="title">4.0 GPA</div>
-    <div class="tagline">Based in Washington, D.C. Searching for Relocation.
-    <br>Worked with the Department of the Treasury</div>
-    <div class="price">$80,000 - $100,000 a year</div>
-    <a href="mailto:Torresc6@vcu.edu?subject=Follow-up%20on%20Your%20Application&body=Hello%2C%0D%0AI%20would%20like%20to%20schedule%20a%20time%20to%20speak%20further%20about%20your%20experience%20and%20potential%20fit%20for%20our%20team.%20Please%20share%20your%20availability%20for%20a%20brief%20conversation.%0D%0ABest%20regards." class="button">Buy Now</a>
+    <div class="container">
+        <div class="title">4.0 GPA</div>
+        <div class="tagline">Based in Washington, D.C. Searching for Relocation.
+        <br>Worked with the Department of the Treasury</div>
+        <div class="price">$80,000 - $100,000 a year</div>
+    <a href="mailto:Torresc6@vcu.edu?subject=Follow-up%20on%20Your%20Application&body=Hello%2C%0D%0AI%20would%20like%20to%20schedule%20a%20time%20to%20speak%20further%20about%20your%20experience%20and%20potential%20fit%20for%20our%20team.%20Please%20share%20your%20availability%20for%20a%20brief%20conversation.%0D%0ABest%20regards." class="button">Buy Now</a> 
     <div class="utility-links">
-        <a href="#inspect">Inspect the Code</a>
-        <a href="#diagnostics">Run Diagnostics</a>
-        <a href="#download">Download Specs</a>
-        <a href="#testdrive">Test Drive</a>
-        <a href="#devmode">Unlock Developer Mode</a>
-      </div>  
-      <section id="inspect" class="code-showroom hidden">
-        <div class="code-pane" id="java-pane" tabindex="0">
-          <h3>Java</h3>
-          <pre><code lang="java">
-      // Java: Multi-threaded task manager
-      public class TaskEngine {
-          public static void main(String[] args) {
-              Runnable task = () -> System.out.println("Task running...");
-              new Thread(task).start();
-          }
+      <a href="#inspect">Inspect the Code</a>
+      <a href="#diagnostics">Run Diagnostics</a>
+      <a href="#download">Download Specs</a>
+      <a href="#testdrive">Test Drive</a>
+      <a href="#devmode">Unlock Developer Mode</a>
+    </div>  
+
+    <section id="inspect" class="code-showroom hidden">
+      <div class="code-pane" id="java-pane" tabindex="0">
+        <h3>Java</h3>
+        <pre><code lang="java">
+  // Java: Multi-threaded task manager
+  public class TaskEngine {
+      public static void main(String[] args) {
+          Runnable task = () -> System.out.println("Task running...");
+          new Thread(task).start();
       }
-          </code></pre>
-        </div>
-      
-        <div class="code-pane" id="mips-pane" tabindex="0">
-          <h3>MIPS</h3>
-          <pre><code lang="mips">
-      # MIPS: Load and store
-      .data
-      val: .word 10
-      
-      .text
-      main:
-          lw $t0, val
-          addi $t0, $t0, 1
-          sw $t0, val
-          </code></pre>
-        </div>
-      
-        <button id="closeInspect" class="close-btn" aria-label="Close Inspect the Code">&times;</button>
-      </section>      
-      
-    <div class="footer">© 2025 Yukora LLC</div>
+  }
+        </code></pre>
+      </div>
+    
+      <div class="code-pane" id="mips-pane" tabindex="0">
+        <h3>MIPS</h3>
+        <pre><code lang="mips">
+  # MIPS: Load and store
+  .data
+  val: .word 10
+  
+  .text
+  main:
+      lw $t0, val
+      addi $t0, $t0, 1
+      sw $t0, val
+        </code></pre>
+      </div>
+    
+      <button id="closeInspect" class="close-btn" aria-label="Close Inspect the Code">&times;</button>
+    </section>      
+    
+    <div class="footer">© 2025 LLC</div>
   </div>
- 
-<script>
 
-const inspectSection = document.getElementById('inspect');
-const javaPane = document.getElementById('java-pane');
-const mipsPane = document.getElementById('mips-pane');
-const closeBtn = document.getElementById('closeInspect');
-
-// Open inspect on clicking the utility link (make sure utility link href="#inspect")
-document.querySelector('a[href="#inspect"]').addEventListener('click', e => {
-  e.preventDefault();
-  inspectSection.classList.remove('hidden');
-  document.body.style.overflow = 'hidden'; // disable background scroll
-  javaPane.focus();
-});
-
-// Close button hides the showroom
-closeBtn.addEventListener('click', () => {
-  inspectSection.classList.add('hidden');
-  document.body.style.overflow = ''; // restore scroll
-});
-
-// Sync scroll positions
-javaPane.addEventListener('scroll', () => {
-  mipsPane.scrollTop = javaPane.scrollTop;
-});
-mipsPane.addEventListener('scroll', () => {
-  javaPane.scrollTop = mipsPane.scrollTop;
-});
-</script>
-
+  <script src="js/inspect.js"></script>
 </body>
 </html>
