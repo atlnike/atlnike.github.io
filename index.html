@@ -86,8 +86,37 @@
         font-size: 2.2rem;
       }
     }
+    .utility-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  margin-top: 1.5rem;
+  color: #333;
+}
+
+.utility-links a {
+  text-decoration: none;
+  color: var(--black);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.utility-links a:hover {
+  border-color: var(--black);
+  opacity: 0.8;
+}
+
   </style>
 </head>
+<div class="utility-links">
+    <a href="#inspect">Inspect the Code</a>
+    <a href="#diagnostics">Run Diagnostics</a>
+    <a href="#download">Download Specs</a>
+    <a href="#testdrive">Test Drive</a>
+    <a href="#devmode">Unlock Developer Mode</a>
+  </div>  
 <body>
   <div class="container">
     <div class="title">4.0 GPA</div>
