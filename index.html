@@ -88,40 +88,67 @@
     }
     .flame-container {
   position: fixed;
-  width: 150px;
-  height: 200px;
-  z-index: 0;
-  opacity: 0.6;
+  width: 120px;
+  height: 120px;
   pointer-events: none;
+  z-index: 1;
 }
 
-.flame-container svg {
+.flame {
+  position: absolute;
+  width: 40px;
+  height: 80px;
+  background: radial-gradient(ellipse at center, #00cfff 0%, #ff6f00 70%, transparent 100%);
+  border-radius: 50% 50% 40% 40%;
+  opacity: 0.8;
+  filter: blur(6px);
+  animation: flame-flicker 1.8s infinite ease-in-out alternate;
+}
+
+.flame::before,
+.flame::after {
+  content: '';
+  position: absolute;
   width: 100%;
   height: 100%;
+  background: inherit;
+  border-radius: inherit;
+  opacity: 0.6;
+  animation: flame-flicker 2s infinite ease-in-out alternate;
 }
 
-.top-left {
-  top: -50px;
-  left: -50px;
-  transform: rotate(0deg);
+.flame::before {
+  transform: scale(1.2) translateY(-10%);
+  filter: blur(10px);
+  animation-delay: 0.4s;
 }
 
-.top-right {
-  top: -50px;
-  right: -50px;
-  transform: rotate(90deg);
+.flame::after {
+  transform: scale(0.8) translateY(10%);
+  filter: blur(4px);
+  animation-delay: 0.2s;
 }
 
-.bottom-left {
-  bottom: -50px;
-  left: -50px;
-  transform: rotate(270deg);
+@keyframes flame-flicker {
+  0% {
+    transform: rotate(0deg) translateY(0px) scaleX(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: rotate(-8deg) translateY(-6px) scaleX(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(5deg) translateY(0px) scaleX(0.95);
+    opacity: 0.6;
+  }
 }
 
-.bottom-right {
-  bottom: -50px;
-  right: -50px;
-  transform: rotate(180deg);
+/* Position it top-left, offscreen reaching in */
+.flame-container.top-left {
+  top: -60px;
+  left: -60px;
+  transform: rotate(45deg);
 }
 
   </style>
@@ -133,25 +160,11 @@
     <div class="price">$20</div>
     <a href="mailto:you@example.com?subject=Book%20Purchase%20Request%20-%20Ferrari" class="button">Buy Now</a>
     <div class="footer">© 2025 Yukora LLC</div>
-    <!-- Top Left Flame -->
+  </div>
+  <!-- Organic Flame Top-Left -->
 <div class="flame-container top-left">
-    <svg viewBox="0 0 100 150" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="flameGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#00cfff">
-            <animate attributeName="stop-color" values="#00cfff;#ff6f00;#00cfff" dur="3s" repeatCount="indefinite" />
-          </stop>
-          <stop offset="100%" stop-color="#ff6f00">
-            <animate attributeName="stop-color" values="#ff6f00;#00cfff;#ff6f00" dur="3s" repeatCount="indefinite" />
-          </stop>
-        </linearGradient>
-      </defs>
-      <path d="M50,150 Q40,100 50,50 Q60,100 50,150 Z" fill="url(#flameGradient)">
-        <animateTransform attributeName="transform" type="skewX" values="0;5;-5;0" dur="2.5s" repeatCount="indefinite"/>
-      </path>
-    </svg>
+    <div class="flame"></div>
   </div>
   
-  </div>
 </body>
 </html>
