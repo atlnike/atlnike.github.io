@@ -3,358 +3,216 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>JS Breakout MiniGame Demo</title>
+<title>MIPS Pong Simulator</title>
 <style>
-  /* Modern cool blue/gray theme */
   body {
-    font-family: 'Space Grotesk', sans-serif;
-    background: #121417;
-    color: #e0e6f3;
+    background: #121212;
+    color: #e0e0e0;
+    font-family: 'Consolas', monospace, monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem;
+    padding: 1rem;
     height: 100vh;
     margin: 0;
-  }
-  #gameContainer {
-    background: #1e2228;
-    border-radius: 10px;
-    padding: 1rem 1.5rem;
-    width: 320px;
     user-select: none;
-    position: relative;
-    box-shadow: 0 4px 15px rgba(30,34,40,0.75);
-  }
-  canvas {
-    background: #22272f;
-    display: block;
-    margin: 0 auto;
-    border-radius: 6px;
-    box-shadow: inset 0 0 8px #2f3640;
-  }
-  button {
-    background: #3a4756;
-    border: none;
-    padding: 0.5rem 1rem;
-    margin: 1rem 0 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    color: #cbd5e1;
-    border-radius: 5px;
-    transition: background 0.3s ease;
-  }
-  button:hover {
-    background: #52637a;
-  }
-  #sourceCode {
-    background: #1e2228;
-    border: 1px solid #444c56;
-    padding: 1rem;
-    margin-top: 1rem;
-    font-family: monospace;
-    white-space: pre-wrap;
-    max-height: 200px;
-    overflow-y: auto;
-    display: none;
-    border-radius: 8px;
-    user-select: text;
-    color: #a0aec0;
-    box-shadow: inset 0 0 10px #2f3640;
   }
   h1 {
     margin-bottom: 0.5rem;
-    font-weight: 700;
-    color: #f1f5f9;
-    letter-spacing: 0.04em;
+  }
+  #gameCanvas {
+    background: #222;
+    border: 2px solid #444;
+    image-rendering: pixelated;
+    margin-bottom: 1rem;
+  }
+  #registers {
+    display: grid;
+    grid-template-columns: repeat(3, 120px);
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .reg {
+    background: #1e1e1e;
+    padding: 0.5rem;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .reg strong {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #90caf9;
+  }
+  #instructions {
+    font-size: 0.9rem;
+    color: #999;
+    max-width: 600px;
+    text-align: center;
   }
 </style>
 </head>
 <body>
-
-<h1>JavaScript Breakout</h1>
-<div id="gameContainer">
-  <canvas id="gameCanvas" width="300" height="200"></canvas>
-  <button id="startPauseBtn">Start</button>
-  <button id="toggleSourceBtn">View Source</button>
-  <pre id="sourceCode"></pre>
+<h1>MIPS Pong Simulator</h1>
+<canvas id="gameCanvas" width="160" height="100"></canvas>
+<div id="registers">
+  <div class="reg"><strong>$t0 (ballX)</strong><span id="reg_t0">0</span></div>
+  <div class="reg"><strong>$t1 (ballY)</strong><span id="reg_t1">0</span></div>
+  <div class="reg"><strong>$t2 (ballDirX)</strong><span id="reg_t2">0</span></div>
+  <div class="reg"><strong>$t3 (ballDirY)</strong><span id="reg_t3">0</span></div>
+  <div class="reg"><strong>$t4 (paddle1Y)</strong><span id="reg_t4">0</span></div>
+  <div class="reg"><strong>$t5 (paddle2Y)</strong><span id="reg_t5">0</span></div>
+</div>
+<div id="instructions">
+  Use <strong>W/S</strong> for Left Paddle and <strong>Arrow Up/Down</strong> for Right Paddle.<br>
+  Press <strong>Space</strong> to start/pause the game.
 </div>
 
 <script>
+(() => {
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
 
-  const paddleHeight = 10;
-  const paddleWidth = 70;
-  let paddleX = (canvas.width - paddleWidth) / 2;
+  // Registers (simulate MIPS registers)
+  let registers = {
+    t0: 10, // ballX
+    t1: 50, // ballY
+    t2: 1,  // ballDirX (+1 right, -1 left)
+    t3: 1,  // ballDirY (+1 down, -1 up)
+    t4: 40, // paddle1Y
+    t5: 40  // paddle2Y
+  };
 
-  const ballRadius = 8;
-  let x = canvas.width / 2;
-  let y = canvas.height - 30;
-  // Slower ball speed
-  let dx = 1.8;
-  let dy = -1.8;
+  // Register display elements
+  const regElements = {
+    t0: document.getElementById('reg_t0'),
+    t1: document.getElementById('reg_t1'),
+    t2: document.getElementById('reg_t2'),
+    t3: document.getElementById('reg_t3'),
+    t4: document.getElementById('reg_t4'),
+    t5: document.getElementById('reg_t5')
+  };
 
-  const brickRowCount = 3;
-  const brickColumnCount = 5;
-  const brickWidth = 50;
-  const brickHeight = 15;
-  const brickPadding = 10;
-  const brickOffsetTop = 30;
-  const brickOffsetLeft = 25;
+  // Game state
+  let running = false;
+  const paddleHeight = 20;
+  const paddleWidth = 5;
+  const ballSize = 5;
+  const paddleSpeed = 2;
+  const ballSpeed = 1; // slower ball speed
 
-  let bricks = [];
-  for(let c=0; c<brickColumnCount; c++) {
-    bricks[c] = [];
-    for(let r=0; r<brickRowCount; r++) {
-      bricks[c][r] = { x: 0, y: 0, status: 1 };
-    }
-  }
+  // Key state
+  const keys = {};
 
-  let rightPressed = false;
-  let leftPressed = false;
+  window.addEventListener('keydown', e => {
+    keys[e.key.toLowerCase()] = true;
 
-  let score = 0;
-  let lives = 3;
-
-  let isRunning = false;
-  let animationId;
-
-  function drawBall() {
-    ctx.beginPath();
-    ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-    ctx.fillStyle = '#a0aec0'; // soft gray-blue ball
-    ctx.fill();
-    ctx.closePath();
-  }
-
-  function drawPaddle() {
-    ctx.beginPath();
-    ctx.rect(paddleX, canvas.height - paddleHeight - 5, paddleWidth, paddleHeight);
-    ctx.fillStyle = '#718096'; // muted blue-gray paddle
-    ctx.fill();
-    ctx.closePath();
-  }
-
-  function drawBricks() {
-    for(let c=0; c<brickColumnCount; c++) {
-      for(let r=0; r<brickRowCount; r++) {
-        if(bricks[c][r].status === 1) {
-          let brickX = c*(brickWidth + brickPadding) + brickOffsetLeft;
-          let brickY = r*(brickHeight + brickPadding) + brickOffsetTop;
-          bricks[c][r].x = brickX;
-          bricks[c][r].y = brickY;
-          ctx.beginPath();
-          ctx.rect(brickX, brickY, brickWidth, brickHeight);
-          ctx.fillStyle = '#4c566a'; // darker bricks
-          ctx.fill();
-          ctx.closePath();
-        }
+    if (e.key === ' ') {
+      running = !running;
+      if (running) {
+        loop();
       }
+      e.preventDefault();
     }
-  }
+  });
+  window.addEventListener('keyup', e => {
+    keys[e.key.toLowerCase()] = false;
+  });
 
-  function drawScore() {
-    ctx.font = '14px monospace';
-    ctx.fillStyle = '#cbd5e1';
-    ctx.fillText('Score: '+score, 8, 20);
-  }
+  function update() {
+    if (!running) return;
 
-  function drawLives() {
-    ctx.font = '14px monospace';
-    ctx.fillStyle = '#cbd5e1';
-    ctx.fillText('Lives: '+lives, canvas.width - 70, 20);
-  }
-
-  // No alert popups, instead use console.log or on-screen text (could add that later)
-
-  function collisionDetection() {
-    for(let c=0; c<brickColumnCount; c++) {
-      for(let r=0; r<brickRowCount; r++) {
-        let b = bricks[c][r];
-        if(b.status === 1) {
-          if(x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
-            dy = -dy;
-            b.status = 0;
-            score++;
-            if(score === brickRowCount * brickColumnCount) {
-              // End game gracefully - stop and maybe show subtle message later
-              isRunning = false;
-              cancelAnimationFrame(animationId);
-              // You can optionally display text on canvas instead of alert
-              drawWinMessage();
-            }
-          }
-        }
-      }
+    // Move paddles
+    if (keys['w'] && registers.t4 > 0) {
+      registers.t4 -= paddleSpeed;
     }
-  }
+    if (keys['s'] && registers.t4 < height - paddleHeight) {
+      registers.t4 += paddleSpeed;
+    }
+    if (keys['arrowup'] && registers.t5 > 0) {
+      registers.t5 -= paddleSpeed;
+    }
+    if (keys['arrowdown'] && registers.t5 < height - paddleHeight) {
+      registers.t5 += paddleSpeed;
+    }
 
-  function drawWinMessage() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#cbd5e1';
-    ctx.font = '20px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('🎉 You Win! 🎉', canvas.width/2, canvas.height/2);
-  }
+    // Move ball
+    registers.t0 += registers.t2 * ballSpeed;
+    registers.t1 += registers.t3 * ballSpeed;
 
-  function drawGameOverMessage() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#cbd5e1';
-    ctx.font = '20px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('Game Over', canvas.width/2, canvas.height/2);
+    // Ball collision top/bottom
+    if (registers.t1 <= 0) {
+      registers.t1 = 0;
+      registers.t3 = 1; // invert vertical direction
+    }
+    if (registers.t1 >= height - ballSize) {
+      registers.t1 = height - ballSize;
+      registers.t3 = -1;
+    }
+
+    // Ball collision left paddle
+    if (
+      registers.t0 <= paddleWidth &&
+      registers.t1 + ballSize >= registers.t4 &&
+      registers.t1 <= registers.t4 + paddleHeight
+    ) {
+      registers.t0 = paddleWidth;
+      registers.t2 = 1; // bounce right
+    }
+    // Ball collision right paddle
+    if (
+      registers.t0 >= width - paddleWidth - ballSize &&
+      registers.t1 + ballSize >= registers.t5 &&
+      registers.t1 <= registers.t5 + paddleHeight
+    ) {
+      registers.t0 = width - paddleWidth - ballSize;
+      registers.t2 = -1; // bounce left
+    }
+
+    // Ball out of bounds reset
+    if (registers.t0 < 0 || registers.t0 > width) {
+      // Reset ball position & direction
+      registers.t0 = width / 2;
+      registers.t1 = height / 2;
+      // Random initial direction
+      registers.t2 = Math.random() > 0.5 ? 1 : -1;
+      registers.t3 = Math.random() > 0.5 ? 1 : -1;
+    }
   }
 
   function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, width, height);
 
-    drawBricks();
-    drawBall();
-    drawPaddle();
-    drawScore();
-    drawLives();
-    collisionDetection();
+    // Draw paddles
+    ctx.fillStyle = '#44aaff';
+    ctx.fillRect(0, registers.t4, paddleWidth, paddleHeight);
+    ctx.fillRect(width - paddleWidth, registers.t5, paddleWidth, paddleHeight);
 
-    if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-      dx = -dx;
-    }
-    if(y + dy < ballRadius) {
-      dy = -dy;
-    } else if(y + dy > canvas.height - ballRadius - paddleHeight - 5) {
-      if(x > paddleX && x < paddleX + paddleWidth) {
-        dy = -dy;
-      } else {
-        lives--;
-        if(!lives) {
-          isRunning = false;
-          cancelAnimationFrame(animationId);
-          drawGameOverMessage();
-          return;
-        } else {
-          x = canvas.width/2;
-          y = canvas.height-30;
-          dx = 1.8;
-          dy = -1.8;
-          paddleX = (canvas.width - paddleWidth)/2;
-        }
-      }
-    }
+    // Draw ball
+    ctx.fillStyle = '#ffaa44';
+    ctx.fillRect(registers.t0, registers.t1, ballSize, ballSize);
+  }
 
-    if(rightPressed && paddleX < canvas.width - paddleWidth) {
-      paddleX += 5;
-    } else if(leftPressed && paddleX > 0) {
-      paddleX -= 5;
+  function updateRegisterDisplay() {
+    for (const reg in registers) {
+      regElements[reg].textContent = registers[reg].toFixed(1);
     }
   }
 
-  function gameLoop() {
-    if (!isRunning) return;
+  function loop() {
+    if (!running) return;
+    update();
     draw();
-    x += dx;
-    y += dy;
-    animationId = requestAnimationFrame(gameLoop);
+    updateRegisterDisplay();
+    requestAnimationFrame(loop);
   }
 
-  document.addEventListener("keydown", e => {
-    if(e.key === "Right" || e.key === "ArrowRight") {
-      rightPressed = true;
-    } else if(e.key === "Left" || e.key === "ArrowLeft") {
-      leftPressed = true;
-    }
-  });
-
-  document.addEventListener("keyup", e => {
-    if(e.key === "Right" || e.key === "ArrowRight") {
-      rightPressed = false;
-    } else if(e.key === "Left" || e.key === "ArrowLeft") {
-      leftPressed = false;
-    }
-  });
-
-  const startPauseBtn = document.getElementById('startPauseBtn');
-  startPauseBtn.addEventListener('click', () => {
-    if(isRunning) {
-      isRunning = false;
-      startPauseBtn.textContent = 'Start';
-      cancelAnimationFrame(animationId);
-    } else {
-      if(!animationId) {
-        resetGame();
-      }
-      isRunning = true;
-      startPauseBtn.textContent = 'Pause';
-      gameLoop();
-    }
-  });
-
-  function resetGame() {
-    score = 0;
-    lives = 3;
-    x = canvas.width / 2;
-    y = canvas.height - 30;
-    dx = 1.8;
-    dy = -1.8;
-    paddleX = (canvas.width - paddleWidth) / 2;
-    for(let c=0; c<brickColumnCount; c++) {
-      for(let r=0; r<brickRowCount; r++) {
-        bricks[c][r].status = 1;
-      }
-    }
-    animationId = null;
-    // Clear messages when resetting game
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-
-  const toggleSourceBtn = document.getElementById('toggleSourceBtn');
-  const sourceCodePre = document.getElementById('sourceCode');
-  const sourceCode = `// JavaScript Breakout Game (simplified)
-// Slower speed, modern colors, no popups, on-canvas messages
-
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const paddleHeight = 10;
-const paddleWidth = 70;
-let paddleX = (canvas.width - paddleWidth) / 2;
-const ballRadius = 8;
-let x = canvas.width / 2;
-let y = canvas.height - 30;
-let dx = 1.8;
-let dy = -1.8;
-const brickRowCount = 3;
-const brickColumnCount = 5;
-const brickWidth = 50;
-const brickHeight = 15;
-const brickPadding = 10;
-const brickOffsetTop = 30;
-const brickOffsetLeft = 25;
-let bricks = [];
-for(let c=0; c<brickColumnCount; c++) {
-  bricks[c] = [];
-  for(let r=0; r<brickRowCount; r++) {
-    bricks[c][r] = { x: 0, y: 0, status: 1 };
-  }
-}
-let rightPressed = false;
-let leftPressed = false;
-let score = 0;
-let lives = 3;
-let isRunning = false;
-let animationId;
-// Draw functions, collision detection, controls, and game loop (see full code above)
-`;
-
-  toggleSourceBtn.addEventListener('click', () => {
-    if(sourceCodePre.style.display === 'block') {
-      sourceCodePre.style.display = 'none';
-      toggleSourceBtn.textContent = 'View Source';
-    } else {
-      sourceCodePre.textContent = sourceCode;
-      sourceCodePre.style.display = 'block';
-      toggleSourceBtn.textContent = 'Hide Source';
-    }
-  });
-
+  // Initial draw & register display
+  draw();
+  updateRegisterDisplay();
+})();
 </script>
+
 </body>
 </html>
