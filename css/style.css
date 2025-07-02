@@ -1,3 +1,7 @@
+.hidden {
+    display: none !important;
+  }  
+
 :root {
     --yellow: #FFF200;
     --black: #111111;
