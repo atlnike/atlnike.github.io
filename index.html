@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ferrari</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --yellow: #FFF200;
@@ -90,7 +90,7 @@
       }
     }
 
-    /* 🔥 Flame Effect Styling */
+    /* Flame containers fixed in corners */
     .flame-container {
       position: fixed;
       width: 120px;
@@ -103,11 +103,19 @@
       position: absolute;
       width: 40px;
       height: 80px;
-      background: radial-gradient(ellipse at center, #00cfff 0%, #ff6f00 70%, transparent 100%);
+      background-color: transparent; /* fallback */
+      background: radial-gradient(
+        ellipse at center,
+        #00cfff 0%,
+        #ff6f00 70%,
+        transparent 100%
+      );
       border-radius: 50% 50% 40% 40%;
-      opacity: 0.8;
-      filter: blur(6px);
+      opacity: 0.9;
+      filter: blur(8px);
       animation: flame-flicker 1.8s infinite ease-in-out alternate;
+      /* DEBUG: Uncomment to see bounding box */
+      /* background-color: red !important; */
     }
 
     .flame::before,
@@ -124,19 +132,19 @@
 
     .flame::before {
       transform: scale(1.2) translateY(-10%);
-      filter: blur(10px);
+      filter: blur(12px);
       animation-delay: 0.4s;
     }
 
     .flame::after {
       transform: scale(0.8) translateY(10%);
-      filter: blur(4px);
+      filter: blur(5px);
       animation-delay: 0.2s;
     }
 
     @keyframes flame-flicker {
       0% {
-        transform: rotate(0deg) translateY(0px) scaleX(1);
+        transform: rotate(0deg) translateY(0) scaleX(1);
         opacity: 0.7;
       }
       50% {
@@ -144,16 +152,34 @@
         opacity: 1;
       }
       100% {
-        transform: rotate(5deg) translateY(0px) scaleX(0.95);
+        transform: rotate(5deg) translateY(0) scaleX(0.95);
         opacity: 0.6;
       }
     }
 
-    .top-left    { top: -60px; left: -60px; transform: rotate(45deg); }
-    .top-right   { top: -60px; right: -60px; transform: rotate(135deg); }
-    .bottom-left { bottom: -60px; left: -60px; transform: rotate(-45deg); }
-    .bottom-right{ bottom: -60px; right: -60px; transform: rotate(-135deg); }
+    .top-left {
+      top: -60px;
+      left: -60px;
+      transform: rotate(45deg);
+    }
 
+    .top-right {
+      top: -60px;
+      right: -60px;
+      transform: rotate(135deg);
+    }
+
+    .bottom-left {
+      bottom: -60px;
+      left: -60px;
+      transform: rotate(-45deg);
+    }
+
+    .bottom-right {
+      bottom: -60px;
+      right: -60px;
+      transform: rotate(-135deg);
+    }
   </style>
 </head>
 <body>
@@ -165,21 +191,10 @@
     <div class="footer">© 2025 LLC</div>
   </div>
 
-  <!-- 🔥 Four Organic Flame Corners -->
-  <div class="flame-container top-left">
-    <div class="flame"></div>
-  </div>
-
-  <div class="flame-container top-right">
-    <div class="flame"></div>
-  </div>
-
-  <div class="flame-container bottom-left">
-    <div class="flame"></div>
-  </div>
-
-  <div class="flame-container bottom-right">
-    <div class="flame"></div>
-  </div>
+  <!-- Flame Corners -->
+  <div class="flame-container top-left"><div class="flame"></div></div>
+  <div class="flame-container top-right"><div class="flame"></div></div>
+  <div class="flame-container bottom-left"><div class="flame"></div></div>
+  <div class="flame-container bottom-right"><div class="flame"></div></div>
 </body>
 </html>
