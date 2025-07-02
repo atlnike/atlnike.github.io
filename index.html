@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ferrari</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --yellow: #FFF200;
@@ -27,7 +27,6 @@
       align-items: center;
       min-height: 100vh;
       padding: 2rem;
-      overflow: hidden;
     }
 
     .container {
@@ -36,8 +35,6 @@
       display: flex;
       flex-direction: column;
       gap: 2rem;
-      position: relative;
-      z-index: 0;
     }
 
     .title {
@@ -89,97 +86,6 @@
         font-size: 2.2rem;
       }
     }
-
-    /* Flame containers fixed in corners */
-    .flame-container {
-      position: fixed;
-      width: 120px;
-      height: 120px;
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    .flame {
-      position: absolute;
-      width: 40px;
-      height: 80px;
-      background-color: transparent; /* fallback */
-      background: radial-gradient(
-        ellipse at center,
-        #00cfff 0%,
-        #ff6f00 70%,
-        transparent 100%
-      );
-      border-radius: 50% 50% 40% 40%;
-      opacity: 0.9;
-      filter: blur(8px);
-      animation: flame-flicker 1.8s infinite ease-in-out alternate;
-      /* DEBUG: Uncomment to see bounding box */
-      /* background-color: red !important; */
-    }
-
-    .flame::before,
-    .flame::after {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: inherit;
-      border-radius: inherit;
-      opacity: 0.6;
-      animation: flame-flicker 2s infinite ease-in-out alternate;
-    }
-
-    .flame::before {
-      transform: scale(1.2) translateY(-10%);
-      filter: blur(12px);
-      animation-delay: 0.4s;
-    }
-
-    .flame::after {
-      transform: scale(0.8) translateY(10%);
-      filter: blur(5px);
-      animation-delay: 0.2s;
-    }
-
-    @keyframes flame-flicker {
-      0% {
-        transform: rotate(0deg) translateY(0) scaleX(1);
-        opacity: 0.7;
-      }
-      50% {
-        transform: rotate(-8deg) translateY(-6px) scaleX(1.05);
-        opacity: 1;
-      }
-      100% {
-        transform: rotate(5deg) translateY(0) scaleX(0.95);
-        opacity: 0.6;
-      }
-    }
-
-    .top-left {
-      top: -60px;
-      left: -60px;
-      transform: rotate(45deg);
-    }
-
-    .top-right {
-      top: -60px;
-      right: -60px;
-      transform: rotate(135deg);
-    }
-
-    .bottom-left {
-      bottom: -60px;
-      left: -60px;
-      transform: rotate(-45deg);
-    }
-
-    .bottom-right {
-      bottom: -60px;
-      right: -60px;
-      transform: rotate(-135deg);
-    }
   </style>
 </head>
 <body>
@@ -188,13 +94,7 @@
     <div class="tagline">A Book About Precision, Power, and Silence</div>
     <div class="price">$20</div>
     <a href="mailto:you@example.com?subject=Book%20Purchase%20Request%20-%20Ferrari" class="button">Buy Now</a>
-    <div class="footer">© 2025 LLC</div>
+    <div class="footer">© 2025 Yukora</div>
   </div>
-
-  <!-- Flame Corners -->
-  <div class="flame-container top-left"><div class="flame"></div></div>
-  <div class="flame-container top-right"><div class="flame"></div></div>
-  <div class="flame-container bottom-left"><div class="flame"></div></div>
-  <div class="flame-container bottom-right"><div class="flame"></div></div>
 </body>
 </html>
