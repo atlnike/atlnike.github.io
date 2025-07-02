@@ -21,47 +21,12 @@
       <a href="#testdrive">Test Drive</a>
       <a href="#devmode">Unlock Developer Mode</a>
     </div>  
-
-    <section id="inspect" class="code-showroom hidden">
-        <div class="code-pane" id="java-pane" tabindex="0">
-          <h3>Java</h3>
-          <pre><code lang="java">
-      // Java: Multi‑threaded task manager
-      public class TaskEngine {
-          public static void main(String[] args) {
-              new Thread(() -> System.out.println("Task running...")).start();
-          }
-      }
-          </code></pre>
-          <canvas id="jsGameCanvas" width="300" height="150"></canvas>
-        </div>
-        <div class="code-pane" id="mips-pane" tabindex="0">
-          <h3>MIPS</h3>
-          <pre><code lang="mips">
-      # MIPS: load/store snippet
-      .data
-      val: .word 10
-      .text
-      main:
-          lw $t0, val
-          addi $t0, $t0, 1
-          sw $t0, val
-          </code></pre>
-          <pre id="mipsGameOutput">Loading MIPS...</pre>
-        </div>
-        <button id="closeInspect" class="close-btn" aria-label="Close">&times;</button>
-      </section>
-      
-          
-    
-    <div class="footer">© 2025 LLC</div>
+    <div class="footer">© 2025 Yukora LLC</div>
   </div>
 
-  <script src="css/style.css"></script>
   <script src="js/inspect.js"></script>
   <script src="game-js.js"></script>
   <script src="game-mips.js"></script>
-  
 
 </body>
 </html>
